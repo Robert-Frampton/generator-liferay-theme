@@ -114,6 +114,23 @@ describe('LayoutCreator', function() {
 
 			assert(prototype._printLayoutPreview.calledOnce, 'print layout was called once');
 			assert.deepEqual(prototype.rows[0], rowData);
+
+			prototype.rowInsertIndex = 1;
+
+			prototype._addRow(rowData);
+
+			assert(prototype._printLayoutPreview.calledTwice, 'print layout was called twice');
+			assert.deepEqual(prototype.rows[1], rowData);
+		});
+	});
+
+	describe('_addWhiteSpace', function() {
+		it('should add whitespace', function() {
+			var choices = [];
+
+			prototype._addWhiteSpace(choices);
+
+			assert.deepEqual(choices[0], new inquirer.Separator(' '), 'Array has whitespace.');
 		});
 	});
 
@@ -412,6 +429,18 @@ describe('LayoutCreator', function() {
 			});
 
 			assert(choices[choices.length - 1].type != 'separator');
+
+			while(prototype.rows.length < 7) {
+				prototype.rows.push({
+					'0': 3,
+					'1': 9
+				});
+			}
+
+			var choices = prototype._getInsertRowChoices();
+
+			assert.equal(choices[0].name, '  -----------------TOP-----------------');
+			assert.equal(choices[0].selectedName, '  =================TOP=================');
 		});
 	});
 
@@ -448,6 +477,17 @@ describe('LayoutCreator', function() {
 			});
 
 			assert(choices[choices.length - 1].type == 'separator');
+
+			while(prototype.rows.length < 7) {
+				prototype.rows.push({
+					'0': 3,
+					'1': 9
+				});
+			}
+
+			var choices = prototype._getRemoveRowChoices();
+
+			assert.equal(stripAnsi(choices[0].line), '  -----------------TOP-----------------');
 		});
 	});
 
